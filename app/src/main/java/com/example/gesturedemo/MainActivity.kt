@@ -5,7 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -17,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -39,28 +40,30 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
-    PointerInputDrag(modifier)
+    ScrollableModifier(modifier)
 }
 
 @Composable
-fun PointerInputDrag(modifier: Modifier = Modifier) {
+fun ScrollableModifier(modifier: Modifier = Modifier) {
 
-    Box(modifier = modifier.fillMaxSize()) {
+    var offset by remember { mutableStateOf(0f) }
 
-        var xOffset by remember { mutableStateOf(0f) }
-        var yOffset by remember { mutableStateOf(0f) }
-
-        Box(
-            Modifier
-                .offset { IntOffset(xOffset.roundToInt(), yOffset.roundToInt()) }
-                .background(Color.Blue)
-                .size(100.dp)
-                .pointerInput(Unit) {
-                    detectDragGestures { _, distance ->
-                        xOffset += distance.x
-                        yOffset += distance.y
-                    }
+    Box(
+        modifier
+            .fillMaxSize()
+            .scrollable(
+                orientation = Orientation.Vertical,
+                state = rememberScrollableState { distance ->
+                    offset += distance
+                    distance
                 }
+            )
+    ) {
+        Box(
+            modifier = Modifier
+                .size(90.dp)
+                .offset { IntOffset(0, offset.roundToInt()) }
+                .background(Color.Red)
         )
     }
 }

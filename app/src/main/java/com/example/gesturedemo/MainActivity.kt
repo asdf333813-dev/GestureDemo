@@ -45,9 +45,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
 fun MultiTouchDemo(modifier: Modifier = Modifier) {
 
     var scale by remember { mutableStateOf(1f) }
+    var angle by remember { mutableStateOf(0f) }
 
-    val state = rememberTransformableState { scaleChange, _, _ ->
+    val state = rememberTransformableState { scaleChange, _, rotationChange ->
         scale *= scaleChange
+        angle += rotationChange
     }
 
     Box(
@@ -58,7 +60,8 @@ fun MultiTouchDemo(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .graphicsLayer(
                     scaleX = scale,
-                    scaleY = scale
+                    scaleY = scale,
+                    rotationZ = angle
                 )
                 .transformable(state = state)
                 .background(Color.Blue)
